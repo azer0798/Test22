@@ -1,0 +1,19 @@
+.video-wrapper {
+    width: 100%;
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+    background: #000;
+}
+
+.card {
+    padding: 0; /* أزلنا الحواف لأن الفيديو سيغطي الجزء العلوي */
+    overflow: hidden;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+iframe {
+    display: block;
+}
