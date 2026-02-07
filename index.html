@@ -4,22 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أكاديمية المعرفة الرقمية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav><h1>📚 أكاديميتي التعليمية</h1></nav>
+    <nav class="navbar">
+        <div class="logo">📚 <span>أكاديميتي</span></div>
+    </nav>
     
-    <header class="hero-edu">
-        <h2>تعلم مهارات المستقبل</h2>
-        <p>محتوى تعليمي متجدد مباشرة من لوحة التحكم الخاصة بك</p>
+    <header class="hero">
+        <div class="hero-content">
+            <h1>طريقك نحو الاحتراف</h1>
+            <p>دروس حصرية ومشروعات تطبيقية لتعلم مهارات المستقبل</p>
+        </div>
     </header>
 
-    <div class="container">
-        <div id="courses-container" class="grid">
-            <p>جاري تحميل الدروس...</p>
+    <main class="container">
+        <div id="courses-container" class="courses-grid">
+            <div class="loading-shimmer">جاري تجهيز الدروس...</div>
         </div>
-    </div>
+    </main>
 
     <script src="script.js"></script>
 </body>
