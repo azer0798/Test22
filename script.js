@@ -1,54 +1,52 @@
-const sheetUrl = 'https://docs.google.com/spreadsheets/d/1TDc6iAXAO-SWmJR-haEdG_nTvJlPfwJwuL87RnG2Pb0/edit?usp=sharing'; // ضع رابط CSV الخاص بك هنا
+const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQwkNE5KEmL1VnRhuA8QzmfYXrLL7-8NDhsyzflhqof7oLBUnMgqdH-TI2fUshYSeMi4IxYZLJWeO8f/pub?output=csv'; 
 
-async function loadCourses() {
+async function getCourses() {
     try {
         const response = await fetch(sheetUrl);
         const data = await response.text();
-        const rows = data.split('\n').slice(1);
+        
+        // تقسيم الأسطر مع تجنب الأسطر الفارغة
+        const rows = data.split('\n').filter(row => row.trim() !== '').slice(1);
         
         const container = document.getElementById('courses-container');
         container.innerHTML = '';
 
         rows.forEach(row => {
-            // استخدام Regex للتعامل مع الفواصل داخل النصوص إن وجدت
-            const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            // التعامل مع الفواصل داخل النصوص بشكل احترافي
+            const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
             
-            if (columns.length >= 3) {
-                const title = columns[0].replace(/"/g, "");
-                const desc = columns[1].replace(/"/g, "");
-                const link = columns[2].trim().replace(/"/g, "");
+            if (cols.length >= 3) {
+                const title = cols[0].replace(/"/g, "").trim();
+                const desc = cols[1].replace(/"/g, "").trim();
+                const videoUrl = cols[2].replace(/"/g, "").trim();
                 
-                // وظيفة استخراج معرف اليوتيوب
-                const videoId = getYoutubeId(link);
-                const videoEmbed = videoId 
-                    ? `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`
-                    : `<p>رابط غير صالح</p>`;
-
-                const card = `
+                const videoId = extractID(videoUrl);
+                
+                const cardHtml = `
                     <div class="card">
-                        <div class="video-wrapper">
-                            ${videoEmbed}
+                        <div class="video-container">
+                            <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
                         </div>
-                        <div class="card-content">
+                        <div class="card-info">
                             <h3>${title}</h3>
                             <p>${desc}</p>
-                            <a href="${link}" target="_blank" class="learn-btn">فتح في يوتيوب 📺</a>
+                            <a href="${videoUrl}" target="_blank" class="btn-watch">شاهد على يوتيوب</a>
                         </div>
                     </div>
                 `;
-                container.innerHTML += card;
+                container.innerHTML += cardHtml;
             }
         });
-    } catch (error) {
-        console.error('Error fetching data:', error);
+    } catch (err) {
+        document.getElementById('courses-container').innerHTML = "حدث خطأ في جلب البيانات. تأكد من رابط CSV.";
     }
 }
 
-// دالة سحرية لاستخراج الـ ID من أي رابط يوتيوب (مختصر أو كامل)
-function getYoutubeId(url) {
+function extractID(url) {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
 }
 
-loadCourses();
+getCourses();
+csv
