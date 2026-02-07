@@ -5,14 +5,14 @@ async function getCourses() {
         const response = await fetch(sheetUrl);
         const data = await response.text();
         
-        // تقسيم الأسطر مع تجنب الأسطر الفارغة
+        // تقسيم البيانات مع مراعاة اللغة العربية والفواصل
         const rows = data.split('\n').filter(row => row.trim() !== '').slice(1);
         
         const container = document.getElementById('courses-container');
         container.innerHTML = '';
 
         rows.forEach(row => {
-            // التعامل مع الفواصل داخل النصوص بشكل احترافي
+            //Regex متطور للتعامل مع النصوص العربية داخل CSV
             const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
             
             if (cols.length >= 3) {
@@ -22,23 +22,25 @@ async function getCourses() {
                 
                 const videoId = extractID(videoUrl);
                 
-                const cardHtml = `
-                    <div class="card">
-                        <div class="video-container">
-                            <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                if(videoId) {
+                    const cardHtml = `
+                        <div class="card">
+                            <div class="video-container">
+                                <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                            <div class="card-info">
+                                <h3>${title}</h3>
+                                <p>${desc}</p>
+                                <a href="${videoUrl}" target="_blank" class="btn-watch">مشاهدة على يوتيوب 📺</a>
+                            </div>
                         </div>
-                        <div class="card-info">
-                            <h3>${title}</h3>
-                            <p>${desc}</p>
-                            <a href="${videoUrl}" target="_blank" class="btn-watch">شاهد على يوتيوب</a>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += cardHtml;
+                    `;
+                    container.innerHTML += cardHtml;
+                }
             }
         });
     } catch (err) {
-        document.getElementById('courses-container').innerHTML = "حدث خطأ في جلب البيانات. تأكد من رابط CSV.";
+        document.getElementById('courses-container').innerHTML = "حدث خطأ في الاتصال بالبيانات.";
     }
 }
 
@@ -49,4 +51,3 @@ function extractID(url) {
 }
 
 getCourses();
-csv
