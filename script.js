@@ -1,4 +1,4 @@
-const sheetUrl = 'https://docs.google.com/spreadsheets/d/1Zui1m8AETx6Icz0_L8Jwo--15F8sSN3QXv8MqlHKewM/edit?usp=drivesdk'; // ضع رابط CSV الخاص بك هنا
+const sheetUrl = 'https://docs.google.com/spreadsheets/d/1TDc6iAXAO-SWmJR-haEdG_nTvJlPfwJwuL87RnG2Pb0/edit?usp=sharing'; // ضع رابط CSV الخاص بك هنا
 
 async function loadCourses() {
     try {
