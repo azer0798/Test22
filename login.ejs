@@ -1,4 +1,4 @@
-<!-- views/admin-login.ejs -->
+<!-- admin-login.ejs -->
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
@@ -11,27 +11,31 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Cairo', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .login-container {
-      background: white;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
       padding: 3rem;
       border-radius: 20px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
       width: 100%;
       max-width: 400px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
     .login-header {
       text-align: center;
       margin-bottom: 2rem;
     }
     .login-header h1 {
-      color: #667eea;
-      font-size: 2rem;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.5rem;
       margin-bottom: 0.5rem;
     }
     .form-group {
@@ -41,45 +45,49 @@
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 600;
-      color: #4a5568;
+      color: #e2e8f0;
     }
     .form-control {
       width: 100%;
       padding: 0.75rem 1rem;
-      border: 2px solid #e2e8f0;
-      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
       font-size: 1rem;
+      color: white;
       transition: all 0.3s;
     }
     .form-control:focus {
       outline: none;
-      border-color: #667eea;
+      border-color: #60a5fa;
+      background: rgba(255,255,255,0.1);
     }
     .btn {
       width: 100%;
       padding: 0.75rem;
-      background: #667eea;
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
     }
     .btn:hover {
-      background: #5a67d8;
       transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(59,130,246,0.4);
     }
     .alert {
       padding: 0.75rem;
-      border-radius: 8px;
+      border-radius: 10px;
       margin-bottom: 1rem;
       text-align: center;
     }
     .alert-error {
-      background: #fed7d7;
-      color: #742a2a;
+      background: rgba(239,68,68,0.2);
+      border-right: 4px solid #ef4444;
+      color: #fecaca;
     }
   </style>
 </head>
@@ -87,11 +95,11 @@
   <div class="login-container">
     <div class="login-header">
       <h1>وسيط DZ</h1>
-      <p style="color: #718096;">تسجيل الدخول إلى لوحة التحكم</p>
+      <p style="color: #94a3b8;">تسجيل الدخول إلى لوحة التحكم</p>
     </div>
     
     <% if (error_msg) { %>
-      <div class="alert alert-error"><%= error_msg %></div>
+      <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= error_msg %></div>
     <% } %>
     
     <form action="/admin/login" method="POST">
