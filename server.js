@@ -64,6 +64,8 @@ app.use((req, res, next) => {
 });
 
 app.set('view engine', 'ejs');
+app.set('view engine', 'ejs');
+app.set('views', __dirname); // استخدم المجلد الحالي بدل مجلد views
 
 // ============ MODELS ============
 const productSchema = new mongoose.Schema({
