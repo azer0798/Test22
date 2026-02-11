@@ -1,24 +1,23 @@
-<!-- admin-login.ejs -->
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تسجيل الدخول | وسيط DZ</title>
+  <title><%= title %> | وسيط DZ</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Cairo', sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      background: linear-gradient(135deg, #0a0f1e, #0f172a);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .login-container {
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(15,23,42,0.95);
       backdrop-filter: blur(10px);
       padding: 3rem;
       border-radius: 20px;
@@ -32,7 +31,7 @@
       margin-bottom: 2rem;
     }
     .login-header h1 {
-      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      background: linear-gradient(135deg, #60a5fa, #c084fc);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       font-size: 2.5rem;
@@ -65,7 +64,7 @@
     .btn {
       width: 100%;
       padding: 0.75rem;
-      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
       border: none;
       border-radius: 12px;
@@ -89,6 +88,11 @@
       border-right: 4px solid #ef4444;
       color: #fecaca;
     }
+    .alert-success {
+      background: rgba(16,185,129,0.2);
+      border-right: 4px solid #10b981;
+      color: #a7f3d0;
+    }
   </style>
 </head>
 <body>
@@ -100,6 +104,9 @@
     
     <% if (error_msg) { %>
       <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= error_msg %></div>
+    <% } %>
+    <% if (success_msg) { %>
+      <div class="alert alert-success"><i class="fas fa-check-circle"></i> <%= success_msg %></div>
     <% } %>
     
     <form action="/admin/login" method="POST">
