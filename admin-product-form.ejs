@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | وسيط DZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+    .admin-container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 280px;
+      background: rgba(15,23,42,0.95);
+      border-left: 1px solid #1e293b;
+      padding: 2rem 1.5rem;
+      position: fixed;
+      height: 100vh;
+    }
+    .sidebar h2 {
+      background: linear-gradient(135deg, #60a5fa, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+    }
+    .sidebar ul { list-style: none; }
+    .sidebar li { margin-bottom: 0.5rem; }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      text-decoration: none;
+      color: #94a3b8;
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+    }
+    .main-content {
+      flex: 1;
+      margin-right: 280px;
+      padding: 2rem;
+    }
+    .form-container {
+      background: rgba(30,41,59,0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .form-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    .form-header h1 {
+      color: white;
+      font-size: 1.8rem;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      font-size: 1rem;
+      color: white;
+      transition: all 0.3s;
+      font-family: 'Cairo', sans-serif;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: #60a5fa;
+      background: rgba(255,255,255,0.1);
+    }
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: left 1rem center;
+      background-size: 1.5rem;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 1.2rem;
+      height: 1.2rem;
+      cursor: pointer;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(59,130,246,0.4);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.15);
+    }
+    .current-image {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .current-image img {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .alert {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+    .alert-error {
+      background: rgba(239,68,68,0.2);
+      border-right: 4px solid #ef4444;
+      color: #fecaca;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <div class="sidebar">
+      <h2>وسيط DZ</h2>
+      <ul>
+        <li><a href="/admin"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a></li>
+        <li><a href="/admin/products" class="active"><i class="fas fa-gamepad"></i> المنتجات</a></li>
+        <li><a href="/admin/orders"><i class="fas fa-shopping-cart"></i> الطلبات</a></li>
+        <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+      </ul>
+    </div>
+    
+    <div class="main-content">
+      <% if (error_msg) { %>
+        <div class="alert alert-error">
+          <i class="fas fa-exclamation-circle"></i> <%= error_msg %>
+        </div>
+      <% } %>
+      
+      <div class="form-container">
+        <div class="form-header">
+          <h1><%= title %></h1>
+          <a href="/admin/products" class="btn btn-secondary">
+            <i class="fas fa-arrow-right"></i> رجوع
+          </a>
+        </div>
+        
+        <form action="/admin/products<%= product ? '/' + product._id : '' %>" method="POST" enctype="multipart/form-data">
+          <% if (product) { %>
+            <input type="hidden" name="_method" value="PUT">
+          <% } %>
+          
+          <div class="form-group">
+            <label>اسم الحساب</label>
+            <input type="text" name="name" class="form-control" value="<%= product ? product.name : '' %>" required>
+          </div>
+          
+          <div class="row">
+            <div class="form-group">
+              <label>السعر (دج)</label>
+              <input type="number" name="price" class="form-control" value="<%= product ? product.price : '' %>" required>
+            </div>
+            
+            <div class="form-group">
+              <label>الفئة</label>
+              <select name="category" class="form-control">
+                <option value="efootball" <%= product && product.category === 'efootball' ? 'selected' : '' %>>eFootball</option>
+                <option value="pes2021" <%= product && product.category === 'pes2021' ? 'selected' : '' %>>PES 2021</option>
+                <option value="pes2023" <%= product && product.category === 'pes2023' ? 'selected' : '' %>>PES 2023</option>
+                <option value="other" <%= product && product.category === 'other' ? 'selected' : '' %>>أخرى</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="form-group">
+              <label>المستوى</label>
+              <input type="number" name="level" class="form-control" value="<%= product ? product.level : '' %>" min="1" max="100">
+            </div>
+            
+            <div class="form-group">
+              <label>النجوم</label>
+              <input type="number" name="stars" class="form-control" value="<%= product ? product.stars : '' %>" min="1" max="5">
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="form-group">
+              <label>Coins</label>
+              <input type="number" name="coins" class="form-control" value="<%= product ? product.coins : '0' %>">
+            </div>
+            
+            <div class="form-group">
+              <label>GP</label>
+              <input type="number" name="gp" class="form-control" value="<%= product ? product.gp : '0' %>">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>وصف الحساب</label>
+            <textarea name="description" class="form-control" required><%= product ? product.description : '' %></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>صورة الحساب</label>
+            <input type="file" name="image" class="form-control" accept="image/*">
+            <% if (product && product.image) { %>
+              <div class="current-image">
+                <img src="<%= product.image %>" alt="<%= product.name %>">
+                <span style="color: #94a3b8;">الصورة الحالية</span>
+              </div>
+            <% } %>
+          </div>
+          
+          <div class="row">
+            <div class="form-group">
+              <label>الحالة</label>
+              <select name="status" class="form-control">
+                <option value="available" <%= product && product.status === 'available' ? 'selected' : '' %>>متاح</option>
+                <option value="pending" <%= product && product.status === 'pending' ? 'selected' : '' %>>قيد الانتظار</option>
+                <option value="sold" <%= product && product.status === 'sold' ? 'selected' : '' %>>تم البيع</option>
+              </select>
+            </div>
+            
+            <div class="form-group checkbox-group">
+              <label style="margin-bottom: 0;">
+                <input type="checkbox" name="featured" <%= product && product.featured ? 'checked' : '' %>>
+                منتج مميز
+              </label>
+            </div>
+          </div>
+          
+          <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button type="submit" class="btn btn-primary" style="flex: 1;">
+              <i class="fas fa-save"></i> <%= product ? 'تحديث المنتج' : 'إضافة المنتج' %>
+            </button>
+            <a href="/admin/products" class="btn btn-secondary">إلغاء</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
