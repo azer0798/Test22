@@ -22,6 +22,9 @@
       background: rgba(15,23,42,0.95);
       border-left: 1px solid #1e293b;
       padding: 2rem 1.5rem;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
     }
     .sidebar h2 {
       background: linear-gradient(135deg, #60a5fa, #c084fc);
@@ -48,11 +51,12 @@
     }
     .main-content {
       flex: 1;
+      margin-right: 280px;
       padding: 2rem;
     }
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
       gap: 1.5rem;
       margin-top: 1.5rem;
     }
@@ -62,6 +66,12 @@
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 16px;
       padding: 1.5rem;
+      transition: all 0.3s;
+    }
+    .product-card:hover {
+      border-color: #60a5fa;
+      box-shadow: 0 10px 30px rgba(96,165,250,0.2);
+      transform: translateY(-2px);
     }
     .product-header {
       display: flex;
@@ -84,10 +94,12 @@
       border-radius: 20px;
       font-size: 0.8rem;
       font-weight: 600;
+      display: inline-block;
     }
-    .badge-success { background: rgba(16,185,129,0.2); color: #a7f3d0; }
-    .badge-warning { background: rgba(245,158,11,0.2); color: #fcd34d; }
-    .badge-danger { background: rgba(239,68,68,0.2); color: #fecaca; }
+    .badge-success { background: rgba(16,185,129,0.2); color: #a7f3d0; border: 1px solid rgba(16,185,129,0.3); }
+    .badge-warning { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+    .badge-danger { background: rgba(239,68,68,0.2); color: #fecaca; border: 1px solid rgba(239,68,68,0.3); }
+    .badge-info { background: rgba(96,165,250,0.2); color: #bfdbfe; border: 1px solid rgba(96,165,250,0.3); }
     .btn {
       padding: 0.5rem 1rem;
       border: none;
@@ -97,23 +109,35 @@
       display: inline-block;
       font-size: 0.9rem;
       margin: 0.25rem;
+      transition: all 0.3s;
     }
     .btn-primary {
       background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
     }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(59,130,246,0.4);
+    }
     .btn-danger {
       background: linear-gradient(135deg, #ef4444, #dc2626);
       color: white;
+    }
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(239,68,68,0.4);
     }
     .btn-sm {
       padding: 0.25rem 0.75rem;
       font-size: 0.8rem;
     }
     .alert {
-      padding: 1rem;
+      padding: 1rem 1.5rem;
       border-radius: 12px;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     .alert-success {
       background: rgba(16,185,129,0.2);
@@ -125,6 +149,34 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 2rem;
+      background: rgba(30,41,59,0.5);
+      padding: 1rem 1.5rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .stats-mini {
+      display: flex;
+      gap: 1rem;
+      color: #94a3b8;
+    }
+    .stats-mini span {
+      color: white;
+      font-weight: 700;
+      margin-left: 0.25rem;
+    }
+    .product-image {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+    .product-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
     }
   </style>
 </head>
@@ -148,7 +200,15 @@
       <% } %>
       
       <div class="header-bar">
-        <h1 style="color: white;">إدارة المنتجات</h1>
+        <div>
+          <h1 style="color: white; margin-bottom: 0.5rem;">إدارة المنتجات</h1>
+          <div class="stats-mini">
+            <span><i class="fas fa-box"></i> إجمالي: <span><%= products.length %></span></span>
+            <span><i class="fas fa-check-circle" style="color: #10b981;"></i> متاح: <span><%= products.filter(p => p.status === 'available').length %></span></span>
+            <span><i class="fas fa-clock" style="color: #f59e0b;"></i> قيد الانتظار: <span><%= products.filter(p => p.status === 'pending').length %></span></span>
+            <span><i class="fas fa-check-double" style="color: #60a5fa;"></i> مباع: <span><%= products.filter(p => p.status === 'sold').length %></span></span>
+          </div>
+        </div>
         <a href="/admin/products/new" class="btn btn-primary"><i class="fas fa-plus"></i> إضافة منتج جديد</a>
       </div>
       
@@ -156,48 +216,73 @@
         <% products.forEach(product => { %>
           <div class="product-card">
             <div class="product-header">
-              <div>
-                <h3 class="product-title"><%= product.name %></h3>
-                <span style="color: #94a3b8; font-size: 0.9rem;">
-                  <i class="far fa-calendar"></i> <%= new Date(product.createdAt).toLocaleDateString('ar-DZ') %>
-                </span>
+              <div style="display: flex; gap: 1rem; align-items: center;">
+                <img src="<%= product.image || 'https://via.placeholder.com/60' %>" class="product-image" alt="<%= product.name %>">
+                <div>
+                  <h3 class="product-title"><%= product.name %></h3>
+                  <span style="color: #94a3b8; font-size: 0.8rem;">
+                    <i class="far fa-calendar"></i> <%= new Date(product.createdAt).toLocaleDateString('ar-DZ') %>
+                  </span>
+                </div>
               </div>
               <span class="product-price"><%= product.price.toLocaleString() %> دج</span>
             </div>
             
-            <div style="margin-bottom: 1rem;">
+            <p style="color: #94a3b8; margin: 1rem 0; font-size: 0.9rem; line-height: 1.6;">
+              <%= product.description ? product.description.substring(0, 100) + '...' : 'لا يوجد وصف' %>
+            </p>
+            
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
               <% if (product.status === 'available') { %>
-                <span class="badge badge-success">متاح</span>
+                <span class="badge badge-success"><i class="fas fa-check-circle"></i> متاح</span>
               <% } else if (product.status === 'pending') { %>
-                <span class="badge badge-warning">قيد الانتظار</span>
+                <span class="badge badge-warning"><i class="fas fa-clock"></i> قيد الانتظار</span>
               <% } else { %>
-                <span class="badge badge-danger">تم البيع</span>
+                <span class="badge badge-danger"><i class="fas fa-check-double"></i> تم البيع</span>
               <% } %>
               
               <% if (product.featured) { %>
-                <span class="badge" style="background: rgba(245,158,11,0.2); color: #fcd34d; margin-right: 0.5rem;">
-                  <i class="fas fa-crown"></i> مميز
+                <span class="badge badge-info"><i class="fas fa-crown"></i> مميز</span>
+              <% } %>
+              
+              <span class="badge" style="background: rgba(139,92,246,0.2); color: #ddd6fe;">
+                <i class="fas fa-tag"></i> <%= product.category || 'efootball' %>
+              </span>
+              
+              <% if (product.level) { %>
+                <span class="badge" style="background: rgba(245,158,11,0.2); color: #fcd34d;">
+                  <i class="fas fa-trophy"></i> مستوى <%= product.level %>
                 </span>
               <% } %>
             </div>
             
-            <p style="color: #94a3b8; margin-bottom: 1rem; font-size: 0.9rem;">
-              <%= product.description?.substring(0, 100) %>...
-            </p>
-            
-            <div style="display: flex; gap: 0.5rem;">
-              <a href="/admin/products/<%= product._id %>/edit" class="btn btn-primary btn-sm">
-                <i class="fas fa-edit"></i> تعديل
+            <div class="product-footer">
+              <div style="display: flex; gap: 0.5rem;">
+                <a href="/admin/products/<%= product._id %>/edit" class="btn btn-primary btn-sm">
+                  <i class="fas fa-edit"></i> تعديل
+                </a>
+                <form action="/admin/products/<%= product._id %>/delete" method="POST" style="display: inline;">
+                  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد من حذف هذا المنتج؟')">
+                    <i class="fas fa-trash"></i> حذف
+                  </button>
+                </form>
+              </div>
+              <a href="/product/<%= product._id %>" target="_blank" style="color: #94a3b8;">
+                <i class="fas fa-external-link-alt"></i>
               </a>
-              <form action="/admin/products/<%= product._id %>/delete" method="POST" style="display: inline;">
-                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد من الحذف؟')">
-                  <i class="fas fa-trash"></i> حذف
-                </button>
-              </form>
             </div>
           </div>
         <% }) %>
       </div>
+      
+      <% if (products.length === 0) { %>
+        <div style="text-align: center; padding: 4rem; background: rgba(30,41,59,0.5); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+          <i class="fas fa-box-open" style="font-size: 4rem; color: #475569; margin-bottom: 1rem;"></i>
+          <h3 style="color: white; margin-bottom: 0.5rem;">لا توجد منتجات</h3>
+          <p style="color: #94a3b8; margin-bottom: 1.5rem;">أضف منتجك الأول الآن</p>
+          <a href="/admin/products/new" class="btn btn-primary"><i class="fas fa-plus"></i> إضافة منتج</a>
+        </div>
+      <% } %>
     </div>
   </div>
 </body>
