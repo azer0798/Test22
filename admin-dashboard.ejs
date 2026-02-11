@@ -1,4 +1,4 @@
-<!-- views/admin-dashboard.ejs -->
+<!-- admin-dashboard.ejs -->
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
@@ -11,8 +11,8 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Cairo', sans-serif;
-      background: #f7fafc;
-      color: #2d3748;
+      background: #0f172a;
+      color: #e2e8f0;
     }
     .admin-container {
       display: flex;
@@ -20,33 +20,31 @@
     }
     .sidebar {
       width: 280px;
-      background: white;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+      background: rgba(15, 23, 42, 0.95);
+      border-left: 1px solid #1e293b;
       padding: 2rem 1.5rem;
     }
     .sidebar h2 {
-      color: #667eea;
-      font-size: 1.5rem;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 1.8rem;
       margin-bottom: 2rem;
     }
-    .sidebar ul {
-      list-style: none;
-    }
-    .sidebar li {
-      margin-bottom: 0.5rem;
-    }
+    .sidebar ul { list-style: none; }
+    .sidebar li { margin-bottom: 0.5rem; }
     .sidebar a {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       padding: 0.75rem 1rem;
       text-decoration: none;
-      color: #4a5568;
-      border-radius: 10px;
+      color: #94a3b8;
+      border-radius: 12px;
       transition: all 0.3s;
     }
     .sidebar a:hover, .sidebar a.active {
-      background: #667eea;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
     }
     .main-content {
@@ -60,22 +58,26 @@
       margin-bottom: 2rem;
     }
     .stat-card {
-      background: white;
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
       padding: 1.5rem;
-      border-radius: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      border-radius: 16px;
       text-align: center;
     }
     .stat-number {
       font-size: 2.5rem;
       font-weight: 700;
-      color: #667eea;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     .recent-table {
-      background: white;
-      border-radius: 15px;
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
       padding: 1.5rem;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
       margin-bottom: 2rem;
     }
     table {
@@ -85,34 +87,27 @@
     th, td {
       padding: 1rem;
       text-align: right;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid #1e293b;
     }
-    th {
-      background: #f7fafc;
-      font-weight: 600;
-    }
+    th { color: #94a3b8; font-weight: 600; }
     .badge {
       padding: 0.25rem 0.75rem;
       border-radius: 20px;
       font-size: 0.8rem;
       font-weight: 600;
     }
-    .badge-success { background: #c6f6d5; color: #22543d; }
-    .badge-warning { background: #feebc8; color: #744210; }
-    .badge-danger { background: #fed7d7; color: #742a2a; }
+    .badge-success { background: rgba(16,185,129,0.2); color: #a7f3d0; }
+    .badge-warning { background: rgba(245,158,11,0.2); color: #fcd34d; }
+    .badge-danger { background: rgba(239,68,68,0.2); color: #fecaca; }
     .btn {
       padding: 0.5rem 1rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
-    }
-    .btn-primary { background: #667eea; color: white; }
-    .alert {
-      padding: 1rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
     }
   </style>
 </head>
@@ -130,36 +125,38 @@
     
     <div class="main-content">
       <% if (success_msg) { %>
-        <div class="alert" style="background: #c6f6d5; color: #22543d;"><%= success_msg %></div>
+        <div style="background: rgba(16,185,129,0.2); border-right: 4px solid #10b981; color: #a7f3d0; padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
+          <i class="fas fa-check-circle"></i> <%= success_msg %>
+        </div>
       <% } %>
       
-      <h1 style="margin-bottom: 2rem;">لوحة التحكم</h1>
+      <h1 style="margin-bottom: 2rem; color: white;">لوحة التحكم</h1>
       
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-number"><%= stats.products %></div>
-          <div style="color: #718096;">إجمالي المنتجات</div>
+          <div style="color: #94a3b8;">إجمالي المنتجات</div>
         </div>
         <div class="stat-card">
           <div class="stat-number"><%= stats.available %></div>
-          <div style="color: #718096;">متاح</div>
+          <div style="color: #94a3b8;">متاح</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number"><%= stats.sold %></div>
-          <div style="color: #718096;">تم البيع</div>
+          <div class="stat-number"><%= stats.sold || 0 %></div>
+          <div style="color: #94a3b8;">تم البيع</div>
         </div>
         <div class="stat-card">
           <div class="stat-number"><%= stats.orders %></div>
-          <div style="color: #718096;">إجمالي الطلبات</div>
+          <div style="color: #94a3b8;">إجمالي الطلبات</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number"><%= stats.pending %></div>
-          <div style="color: #718096;">قيد الانتظار</div>
+          <div class="stat-number"><%= stats.pending || 0 %></div>
+          <div style="color: #94a3b8;">قيد الانتظار</div>
         </div>
       </div>
       
       <div class="recent-table">
-        <h2 style="margin-bottom: 1rem;">أحدث الطلبات</h2>
+        <h2 style="margin-bottom: 1rem; color: white;">أحدث الطلبات</h2>
         <table>
           <thead>
             <tr>
@@ -194,8 +191,8 @@
       
       <div class="recent-table">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <h2>أحدث المنتجات</h2>
-          <a href="/admin/products/new" class="btn btn-primary">+ إضافة منتج</a>
+          <h2 style="color: white;">أحدث المنتجات</h2>
+          <a href="/admin/products/new" class="btn"><i class="fas fa-plus"></i> إضافة منتج</a>
         </div>
         <table>
           <thead>
