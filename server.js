@@ -19,7 +19,7 @@ setInterval(() => {
   const url = process.env.RENDER_URL || 'https://test-1dba.onrender.com';
   https.get(url, (res) => console.log(`✅ Keep-alive ping: ${res.statusCode}`))
     .on('error', (err) => console.log('❌ Keep-alive error:', err.message));
-}, 5 * 60 * 1000); // كل 5 دقائق
+}, 5 * 60 * 1000);
 // ============================================
 
 const app = express();
@@ -67,7 +67,7 @@ app.use((req, res, next) => {
 app.set('view engine', 'ejs');
 
 // ============ MODELS ============
-const Product = mongoose.model('Product', {
+const Product = mongoose.model('Product', new mongoose.Schema({
   name: String, price: Number, description: String,
   category: { type: String, default: 'efootball' },
   level: Number, coins: Number, gp: Number, stars: Number,
@@ -76,21 +76,21 @@ const Product = mongoose.model('Product', {
   status: { type: String, default: 'available' },
   featured: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
-});
+}));
 
-const Order = mongoose.model('Order', {
+const Order = mongoose.model('Order', new mongoose.Schema({
   product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
   customerName: String, customerPhone: String, customerEmail: String,
   paymentMethod: String,
   status: { type: String, default: 'pending' },
   notes: String,
   createdAt: { type: Date, default: Date.now }
-});
+}));
 
-const User = mongoose.model('User', {
+const User = mongoose.model('User', new mongoose.Schema({
   username: String, password: String, role: String,
   name: String, phone: String
-});
+}));
 // ================================
 
 // ============ MIDDLEWARE ============
@@ -101,11 +101,15 @@ const isAuth = (req, res, next) => {
 };
 // ====================================
 
-// ============ PUBLIC ROUTES ============
+// ============ ROUTES ============
 app.get('/', async (req, res) => {
-  const featured = await Product.find({ featured: true, status: 'available' }).limit(6).sort('-createdAt');
-  const latest = await Product.find({ status: 'available' }).limit(8).sort('-createdAt');
-  res.render('index', { title: 'وسيط DZ', featured, latest });
+  try {
+    const featured = await Product.find({ featured: true, status: 'available' }).limit(6).sort('-createdAt');
+    const latest = await Product.find({ status: 'available' }).limit(8).sort('-createdAt');
+    res.render('index', { title: 'وسيط DZ', featured, latest });
+  } catch (err) {
+    res.render('index', { title: 'وسيط DZ', featured: [], latest: [] });
+  }
 });
 
 app.get('/products', async (req, res) => {
@@ -129,7 +133,7 @@ app.get('/products', async (req, res) => {
 
 app.get('/product/:id', async (req, res) => {
   const product = await Product.findById(req.params.id);
-  if (!product) return res.redirect('/');
+  if (!product) return res.redirect('/products');
   
   const related = await Product.find({
     category: product.category,
@@ -163,11 +167,27 @@ app.post('/product/:id/order', async (req, res) => {
   res.redirect(`/product/${product._id}`);
 });
 
-app.get('/order/success/:id', async (req, res) => {
-  const order = await Order.findById(req.params.id).populate('product');
-  res.render('order-success', { title: 'تم الطلب', order });
+app.get('/contact/whatsapp/:orderId', async (req, res) => {
+  const order = await Order.findById(req.params.orderId).populate('product');
+  if (!order) return res.redirect('/');
+  
+  const msg = encodeURIComponent(
+    `السلام عليكم، أريد شراء حساب ${order.product.name} بسعر ${order.product.price} دج\n` +
+    `الاسم: ${order.customerName}\nرقم الطلب: ${order._id}`
+  );
+  res.redirect(`https://wa.me/213${process.env.WHATSAPP || '555123456'}?text=${msg}`);
 });
-// ====================================
+
+app.get('/contact/telegram/:orderId', async (req, res) => {
+  const order = await Order.findById(req.params.orderId).populate('product');
+  if (!order) return res.redirect('/');
+  
+  const msg = encodeURIComponent(
+    `السلام عليكم، أريد شراء حساب ${order.product.name} بسعر ${order.product.price} دج\n` +
+    `الاسم: ${order.customerName}\nرقم الطلب: ${order._id}`
+  );
+  res.redirect(`https://t.me/${process.env.TELEGRAM || 'wassitdz_bot'}?text=${msg}`);
+});
 
 // ============ ADMIN ROUTES ============
 app.get('/admin/login', (req, res) => {
@@ -215,7 +235,6 @@ app.get('/admin', isAuth, async (req, res) => {
   res.render('admin-dashboard', { title: 'لوحة التحكم', stats, recentOrders, recentProducts });
 });
 
-// Products management
 app.get('/admin/products', isAuth, async (req, res) => {
   const products = await Product.find().sort('-createdAt');
   res.render('admin-products', { title: 'المنتجات', products });
@@ -284,7 +303,6 @@ app.post('/admin/products/:id/delete', isAuth, async (req, res) => {
   res.redirect('/admin/products');
 });
 
-// Orders management
 app.get('/admin/orders', isAuth, async (req, res) => {
   const orders = await Order.find().populate('product').sort('-createdAt');
   res.render('admin-orders', { title: 'الطلبات', orders });
@@ -301,30 +319,6 @@ app.post('/admin/orders/:id', isAuth, async (req, res) => {
   
   req.flash('success', 'تم تحديث الحالة');
   res.redirect('/admin/orders');
-});
-// ====================================
-
-// ============ WHATSAPP/TELEGRAM ============
-app.get('/contact/whatsapp/:orderId', async (req, res) => {
-  const order = await Order.findById(req.params.orderId).populate('product');
-  if (!order) return res.redirect('/');
-  
-  const msg = encodeURIComponent(
-    `السلام عليكم، أريد شراء حساب ${order.product.name} بسعر ${order.product.price} دج\n` +
-    `الاسم: ${order.customerName}\nرقم الطلب: ${order._id}`
-  );
-  res.redirect(`https://wa.me/213${process.env.WHATSAPP || 'XXXXXXXXX'}?text=${msg}`);
-});
-
-app.get('/contact/telegram/:orderId', async (req, res) => {
-  const order = await Order.findById(req.params.orderId).populate('product');
-  if (!order) return res.redirect('/');
-  
-  const msg = encodeURIComponent(
-    `السلام عليكم، أريد شراء حساب ${order.product.name} بسعر ${order.product.price} دج\n` +
-    `الاسم: ${order.customerName}\nرقم الطلب: ${order._id}`
-  );
-  res.redirect(`https://t.me/${process.env.TELEGRAM || 'wassitdz_bot'}?text=${msg}`);
 });
 // ====================================
 
