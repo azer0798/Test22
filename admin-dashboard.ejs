@@ -22,6 +22,8 @@
       background: rgba(15,23,42,0.95);
       border-left: 1px solid #1e293b;
       padding: 2rem 1.5rem;
+      position: fixed;
+      height: 100vh;
     }
     .sidebar h2 {
       background: linear-gradient(135deg, #60a5fa, #c084fc);
@@ -48,6 +50,7 @@
     }
     .main-content {
       flex: 1;
+      margin-right: 280px;
       padding: 2rem;
     }
     .stats-grid {
@@ -63,6 +66,11 @@
       padding: 1.5rem;
       border-radius: 16px;
       text-align: center;
+      transition: all 0.3s;
+    }
+    .stat-card:hover {
+      border-color: #60a5fa;
+      transform: translateY(-2px);
     }
     .stat-number {
       font-size: 2.5rem;
@@ -98,6 +106,7 @@
     .badge-success { background: rgba(16,185,129,0.2); color: #a7f3d0; }
     .badge-warning { background: rgba(245,158,11,0.2); color: #fcd34d; }
     .badge-danger { background: rgba(239,68,68,0.2); color: #fecaca; }
+    .badge-info { background: rgba(96,165,250,0.2); color: #bfdbfe; }
     .btn {
       padding: 0.5rem 1rem;
       border: none;
@@ -107,6 +116,10 @@
       display: inline-block;
       background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(59,130,246,0.4);
     }
     .alert {
       padding: 1rem;
@@ -139,7 +152,7 @@
         </div>
       <% } %>
       
-      <h1 style="margin-bottom: 2rem; color: white;">لوحة التحكم</h1>
+      <h1 style="margin-bottom: 2rem; color: white;">مرحباً بك في لوحة التحكم</h1>
       
       <div class="stats-grid">
         <div class="stat-card">
@@ -148,7 +161,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-number"><%= stats.available %></div>
-          <div style="color: #94a3b8;">متاح</div>
+          <div style="color: #94a3b8;">متاح للبيع</div>
         </div>
         <div class="stat-card">
           <div class="stat-number"><%= stats.sold || 0 %></div>
@@ -160,18 +173,21 @@
         </div>
         <div class="stat-card">
           <div class="stat-number"><%= stats.pending || 0 %></div>
-          <div style="color: #94a3b8;">قيد الانتظار</div>
+          <div style="color: #94a3b8;">طلبات قيد الانتظار</div>
         </div>
       </div>
       
       <div class="recent-table">
-        <h2 style="margin-bottom: 1rem; color: white;">أحدث الطلبات</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h2 style="color: white;">أحدث الطلبات</h2>
+          <a href="/admin/orders" style="color: #60a5fa;">عرض الكل <i class="fas fa-arrow-left"></i></a>
+        </div>
         <table>
           <thead>
             <tr>
               <th>المنتج</th>
               <th>العميل</th>
-              <th>السعر</th>
+              <th>المبلغ</th>
               <th>الحالة</th>
               <th>التاريخ</th>
             </tr>
@@ -181,17 +197,19 @@
               <tr>
                 <td><%= order.product?.name || 'غير معروف' %></td>
                 <td><%= order.customerName %></td>
-                <td><%= order.product?.price?.toLocaleString() %> دج</td>
+                <td style="color: #60a5fa; font-weight: 600;"><%= order.product?.price?.toLocaleString() %> دج</td>
                 <td>
                   <% if (order.status === 'pending') { %>
                     <span class="badge badge-warning">قيد الانتظار</span>
+                  <% } else if (order.status === 'contacted') { %>
+                    <span class="badge badge-info">تم التواصل</span>
                   <% } else if (order.status === 'completed') { %>
                     <span class="badge badge-success">مكتمل</span>
                   <% } else { %>
                     <span class="badge badge-danger">ملغي</span>
                   <% } %>
                 </td>
-                <td><%= new Date(order.createdAt).toLocaleDateString('ar-DZ') %></td>
+                <td style="color: #94a3b8;"><%= new Date(order.createdAt).toLocaleDateString('ar-DZ') %></td>
               </tr>
             <% }) %>
           </tbody>
@@ -216,7 +234,7 @@
             <% recentProducts.forEach(product => { %>
               <tr>
                 <td><%= product.name %></td>
-                <td><%= product.price.toLocaleString() %> دج</td>
+                <td style="color: #60a5fa; font-weight: 600;"><%= product.price.toLocaleString() %> دج</td>
                 <td>
                   <% if (product.status === 'available') { %>
                     <span class="badge badge-success">متاح</span>
@@ -226,7 +244,7 @@
                     <span class="badge badge-danger">تم البيع</span>
                   <% } %>
                 </td>
-                <td><%= new Date(product.createdAt).toLocaleDateString('ar-DZ') %></td>
+                <td style="color: #94a3b8;"><%= new Date(product.createdAt).toLocaleDateString('ar-DZ') %></td>
               </tr>
             <% }) %>
           </tbody>
