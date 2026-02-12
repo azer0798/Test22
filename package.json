@@ -1,6 +1,7 @@
 {
-  "name": "chargily-flexy-pro",
+  "name": "chargily-flexy-topup",
   "version": "1.0.0",
+  "description": "نظام شحن تلقائي مدمج مع شارجيلي V1",
   "main": "server.js",
   "dependencies": {
     "express": "^4.18.2",
@@ -8,5 +9,7 @@
     "dotenv": "^16.3.1",
     "moment-timezone": "^0.5.43"
   },
-  "scripts": { "start": "node server.js" }
+  "scripts": {
+    "start": "node server.js"
+  }
 }
