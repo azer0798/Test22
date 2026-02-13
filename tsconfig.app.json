@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "types": ["vite/client"]
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"],
+  "exclude": ["node_modules"]
+}
